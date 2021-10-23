@@ -29,6 +29,9 @@
   "projects": {
     "data": {
       "tags": []
+    },
+    "dynamo-data-service": {
+      "tags": []
     }
   }
 }

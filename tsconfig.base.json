@@ -15,7 +15,10 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@support-site/data": ["libs/data/src/index.ts"]
+      "@support-site/data": ["libs/data/src/index.ts"],
+      "@support-site/dynamo-data-service": [
+        "libs/dynamo-data-service/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

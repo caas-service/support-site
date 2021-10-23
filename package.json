@@ -10,6 +10,7 @@
   },
   "private": true,
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.38.0",
     "tslib": "^2.0.0"
   },
   "devDependencies": {
