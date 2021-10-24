@@ -3,10 +3,12 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "local:aws": "cd apps/support-site-aws && sam-beta-cdk local start-api",
+    "build:aws": "nx run lambda-rest-api:package",
+    "deploy:aws": "npm run build:aws && nx run support-site-aws:deploy",
     "start": "nx serve",
     "build": "nx build",
-    "test": "nx test",
-    "lint": "eslint"
+    "test": "nx test"
   },
   "private": true,
   "dependencies": {
@@ -16,6 +18,8 @@
   "devDependencies": {
     "@aws-cdk/assert": "^1.46.0",
     "@aws-cdk/aws-apigateway": "^1.129.0",
+    "@aws-cdk/aws-apigatewayv2": "^1.129.0",
+    "@aws-cdk/aws-apigatewayv2-integrations": "^1.129.0",
     "@aws-cdk/aws-dynamodb": "^1.129.0",
     "@aws-cdk/aws-lambda": "^1.129.0",
     "@aws-cdk/aws-lambda-nodejs": "^1.46.0",

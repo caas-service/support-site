@@ -1,9 +1,16 @@
 import * as cdk from '@aws-cdk/core';
-import {LambdaIntegration, RestApi} from '@aws-cdk/aws-apigateway';
-import {Code, Function, Runtime} from '@aws-cdk/aws-lambda';
+import { HttpApi, HttpMethod, CorsHttpMethod } from '@aws-cdk/aws-apigatewayv2';
+import { LambdaProxyIntegration } from '@aws-cdk/aws-apigatewayv2-integrations';
+import { Code, Function, Runtime } from '@aws-cdk/aws-lambda';
 import { join } from 'path';
-import {SupportSiteTable} from '@support-site/dynamo-data-service';
+import {
+  DATA_TYPE_KEY,
+  PAGE_KEY,
+  SUPPORT_SITE_TABLE,
+} from '@support-site/dynamo-data-service';
 import { RetentionDays } from '@aws-cdk/aws-logs';
+import { Table, TableProps, AttributeType } from '@aws-cdk/aws-dynamodb';
+import { CfnOutput, Construct } from '@aws-cdk/core';
 
 const dist = (path: string) => join('../../dist/', path);
 
@@ -11,7 +18,12 @@ export class AppStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const api = new RestApi(this, 'support-site-api');
+    const api = new HttpApi(this, 'support-site-api', {
+      corsPreflight: {
+        allowOrigins: ['*'],
+        allowMethods: [CorsHttpMethod.GET],
+      },
+    });
 
     const getDataFunction = new Function(this, 'lambda', {
       runtime: Runtime.NODEJS_14_X,
@@ -26,9 +38,25 @@ export class AppStack extends cdk.Stack {
     });
     dataServiceTable.grantReadData(getDataFunction);
 
-    const dataResource = api.root.addResource('data');
-    const dataTypeResource = dataResource.addResource('{type}');
+    api.addRoutes({
+      path: '/data/{type}',
+      methods: [HttpMethod.GET],
+      integration: new LambdaProxyIntegration({ handler: getDataFunction }),
+    });
 
-    dataTypeResource.addMethod('GET', new LambdaIntegration(getDataFunction));
+    new CfnOutput(this, 'apiUrl', {
+      value: api.url,
+    });
+  }
+}
+
+class SupportSiteTable extends Table {
+  constructor(scope: Construct, id: string, options?: Partial<TableProps>) {
+    super(scope, id, {
+      ...options,
+      tableName: SUPPORT_SITE_TABLE,
+      partitionKey: { name: DATA_TYPE_KEY, type: AttributeType.STRING },
+      sortKey: { name: PAGE_KEY, type: AttributeType.NUMBER },
+    });
   }
 }

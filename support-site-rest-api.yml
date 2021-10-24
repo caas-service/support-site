@@ -46,8 +46,10 @@ components:
         last:
           type: boolean
         page:
+          format: int32
           type: number
         size:
+          format: int32
           type: number
     Data:
       type: object
