@@ -1,10 +1,14 @@
-import { DataService, DataType } from '@support-site/data';
+import { DataType } from '@support-site/data';
 import { DynamoDataService } from '@support-site/dynamo-data-service';
-import { APIGatewayProxyEvent, APIGatewayProxyEventQueryStringParameters, APIGatewayProxyResult } from 'aws-lambda';
+import {
+  APIGatewayProxyEvent,
+  APIGatewayProxyEventQueryStringParameters,
+  APIGatewayProxyResult,
+} from 'aws-lambda';
 
-const dataService: DataService = new DynamoDataService();
-
-function parsePageNumber(query: APIGatewayProxyEventQueryStringParameters): number {
+function parsePageNumber(
+  query: APIGatewayProxyEventQueryStringParameters
+): number {
   if (query && query['page']) {
     const pageNum = parseInt(query['page'], 10);
     if (!isNaN(pageNum)) {
@@ -29,17 +33,12 @@ export const getData = async ({
   };
 
   try {
-    const data = await dataService.getDataForType(
-      DataType[type],
-      { page },
-      group
-    );
+    const dataService = new DynamoDataService(group);
+    const data = await dataService.getDataForType(DataType[type], { page });
     response.body = JSON.stringify(data);
-
   } catch (err) {
     console.log(err);
-    response.statusCode = 500,
-    response.body = JSON.stringify(err);
+    (response.statusCode = 500), (response.body = JSON.stringify(err));
   }
 
   return response;

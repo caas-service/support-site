@@ -9,18 +9,24 @@ import {
 import { DATA_KEY, DATA_TYPE_KEY, PAGE_KEY, SUPPORT_SITE_TABLE } from './table';
 
 export class DynamoDataService implements DataService {
-  constructor(private client = new DynamoDB({ region: 'eu-central-1' })) {}
+  constructor(
+    private group?: string,
+    private client = new DynamoDB({ region: 'eu-central-1' })
+  ) {}
+
+  private buildKey(type: DataType) {
+    let key = `${DataType[type]}`;
+    if (this.group) {
+      key = `${this.group}-${key}`;
+    }
+    return key;
+  }
 
   async getDataForType(
     type: DataType,
-    request: PageRequest,
-    group?: string
+    request: PageRequest
   ): Promise<Page<Data>> {
-    let key = `${DataType[type]}`;
-    if (group) {
-      key = `${group}-${key}`;
-    }
-
+    const key = this.buildKey(type);
     const response = await this.client.getItem({
       TableName: SUPPORT_SITE_TABLE,
       Key: {
