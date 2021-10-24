@@ -5,7 +5,8 @@ export enum DataType {
 }
 
 export interface Data {
-  id: string;
-  data: string;
   type: DataType;
+  data: string;
+  title?: string;
+  comment?: string;
 }
