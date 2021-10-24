@@ -6,7 +6,7 @@ import {
   Page,
   PageRequest,
 } from '@support-site/data';
-import { DATA_TYPE_KEY, PAGE_KEY, SUPPORT_SITE_TABLE } from '..';
+import { DATA_TYPE_KEY, PAGE_KEY, SUPPORT_SITE_TABLE } from './table';
 
 export class DynamoDataService implements DataService {
   constructor(

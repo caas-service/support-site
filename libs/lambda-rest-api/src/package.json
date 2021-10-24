@@ -1,0 +1,8 @@
+{
+  "name": "lambda-rest-api",
+  "version": "1.0.0",
+  "main": "src/app.js",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.38.0"
+  }
+}

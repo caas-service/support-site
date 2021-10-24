@@ -32,6 +32,12 @@
     },
     "dynamo-data-service": {
       "tags": []
+    },
+    "lambda-rest-api": {
+      "tags": []
+    },
+    "support-site-aws": {
+      "tags": []
     }
   }
 }

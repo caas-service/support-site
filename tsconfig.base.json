@@ -18,7 +18,8 @@
       "@support-site/data": ["libs/data/src/index.ts"],
       "@support-site/dynamo-data-service": [
         "libs/dynamo-data-service/src/index.ts"
-      ]
+      ],
+      "@support-site/lambda-rest-api": ["libs/lambda-rest-api/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

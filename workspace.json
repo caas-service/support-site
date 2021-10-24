@@ -8,14 +8,20 @@
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
+          "outputs": [
+            "{options.outputFile}"
+          ],
           "options": {
-            "lintFilePatterns": ["libs/data/**/*.ts"]
+            "lintFilePatterns": [
+              "libs/data/**/*.ts"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/data"],
+          "outputs": [
+            "coverage/libs/data"
+          ],
           "options": {
             "jestConfig": "libs/data/jest.config.js",
             "passWithNoTests": true
@@ -30,16 +36,97 @@
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
+          "outputs": [
+            "{options.outputFile}"
+          ],
           "options": {
-            "lintFilePatterns": ["libs/dynamo-data-service/**/*.ts"]
+            "lintFilePatterns": [
+              "libs/dynamo-data-service/**/*.ts"
+            ]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/dynamo-data-service"],
+          "outputs": [
+            "coverage/libs/dynamo-data-service"
+          ],
           "options": {
             "jestConfig": "libs/dynamo-data-service/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "lambda-rest-api": {
+      "root": "libs/lambda-rest-api",
+      "sourceRoot": "libs/lambda-rest-api/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": [
+            "{options.outputFile}"
+          ],
+          "options": {
+            "lintFilePatterns": [
+              "libs/lambda-rest-api/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/lambda-rest-api"
+          ],
+          "options": {
+            "jestConfig": "libs/lambda-rest-api/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "package": {
+          "executor": "@myin/aws-cdk:package",
+          "options": {
+            "entryFile": "libs/lambda-rest-api/src/index.ts",
+            "tsConfig": "libs/lambda-rest-api/tsconfig.lib.json",
+            "outputPath": "dist/libs/lambda-rest-api"
+          }
+        }
+      }
+    },
+    "support-site-aws": {
+      "projectType": "application",
+      "root": "apps/support-site-aws",
+      "sourceRoot": "apps/support-site-aws/src",
+      "targets": {
+        "deploy": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "cwd": "apps/support-site-aws",
+            "commands": [
+              {
+                "command": "if [ \"{args.stack}\" = \"undefined\" ]; then cdk deploy --require-approval=never; else cdk deploy --require-approval=never {args.stack}; fi"
+              }
+            ]
+          }
+        },
+        "destroy": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "cwd": "apps/support-site-aws",
+            "commands": [
+              {
+                "command": "if [ \"{args.stack}\" = \"undefined\" ]; then cdk destroy -f; else cdk destroy -f {args.stack}; fi"
+              }
+            ]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/apps/support-site-aws"
+          ],
+          "options": {
+            "jestConfig": "apps/support-site-aws/jest.config.js",
             "passWithNoTests": true
           }
         }

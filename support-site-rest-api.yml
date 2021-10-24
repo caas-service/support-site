@@ -1,0 +1,70 @@
+openapi: 3.0.3
+info:
+  title: Support Site
+  version: 1.0.0
+paths:
+  "/data/{type}":
+    get:
+      parameters:
+        - name: type
+          schema:
+            $ref: "#/components/schemas/DataType"
+          in: path
+          required: true
+        - name: page
+          in: query
+          schema:
+            format: int32
+            type: integer
+        - name: group
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GETDataResponse"
+        404:
+          description: no data not found
+components:
+  schemas:
+    GETDataResponse:
+      type: object
+      required:
+        - content
+        - page
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/Data"
+        first:
+          type: boolean
+        last:
+          type: boolean
+        page:
+          type: number
+        size:
+          type: number
+    Data:
+      type: object
+      required:
+        - data
+        - type
+      properties:
+        comment:
+          type: string
+        data:
+          type: string
+        title:
+          type: string
+        type:
+          $ref: "#/components/schemas/DataType"
+    DataType:
+      enum:
+        - MESSAGE
+        - IMAGE
+        - LINK
