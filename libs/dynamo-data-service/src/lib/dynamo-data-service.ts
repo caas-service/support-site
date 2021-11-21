@@ -66,7 +66,7 @@ export class DynamoDataService implements DataService {
         TableName: this.table,
         KeyConditionExpression: `${DATA_TYPE_KEY} = :key`,
         ExpressionAttributeValues: {
-          key: { S: this.buildKey(type) },
+          ':key': { S: this.buildKey(type) },
         },
         Limit: 1,
         ScanIndexForward: false,
@@ -89,9 +89,12 @@ export class DynamoDataService implements DataService {
             [DATA_TYPE_KEY]: { S: this.buildKey(type) },
             [PAGE_KEY]: { N: `${lastPage}`},
           },
-          UpdateExpression: `${DATA_KEY} = :data`,
+          UpdateExpression: `SET #data = :data`,
+          ExpressionAttributeNames: {
+            '#data': DATA_KEY
+          },
           ExpressionAttributeValues: {
-            data: { S: JSON.stringify(lastPageItem) }
+            ':data': { S: JSON.stringify(lastPageItem) }
           }
         })
       );

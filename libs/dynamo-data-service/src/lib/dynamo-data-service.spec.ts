@@ -115,7 +115,7 @@ describe('dynamoDataService', () => {
           },
           UpdateExpression: expect.stringContaining(`${DATA_KEY} = :data`),
           ExpressionAttributeValues: expect.objectContaining({
-            data: { S: expect.stringMatching(/link1.*link2/) },
+            ':data': { S: expect.stringMatching(/link1.*link2/) },
           }),
         })
       );

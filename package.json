@@ -6,6 +6,8 @@
     "local:aws": "cd apps/support-site-aws && sam-beta-cdk local start-api",
     "build:aws": "nx run lambda-rest-api:package",
     "deploy:aws": "npm run build:aws && nx run support-site-aws:deploy",
+    "cli:build": "nx build support-site-cli",
+    "cli": "node dist/apps/support-site-cli/main.js",
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test"
