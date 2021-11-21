@@ -3,7 +3,6 @@ import { mockClient } from 'aws-sdk-client-mock';
 import {
   DeleteItemCommand,
   DynamoDBClient,
-  ExpectedAttributeValue,
   GetItemCommand,
   PutItemCommand,
   QueryCommand,
@@ -14,6 +13,11 @@ import { Data, DataType } from '@support-site/data';
 
 const anyDataItem = (data = '', title = '') => ({
   [DATA_KEY]: { S: `[{"data": "${data}", "title": "${title}"}]` },
+});
+
+const anyDataItemWithKey = (key: string, page: number) => ({
+  [DATA_TYPE_KEY]: { S: key },
+  [PAGE_KEY]: { N: `${page}`},
 });
 
 describe('dynamoDataService', () => {
@@ -65,7 +69,7 @@ describe('dynamoDataService', () => {
         expect.objectContaining({
           Item: {
             [DATA_TYPE_KEY]: { S: 'TEST-IMAGE' },
-            [PAGE_KEY]: { N: '1' },
+            [PAGE_KEY]: { N: '0' },
             [DATA_KEY]: { S: expect.stringMatching(/link1.*link2/) },
           },
         })
@@ -74,7 +78,7 @@ describe('dynamoDataService', () => {
         expect.objectContaining({
           Item: {
             [DATA_TYPE_KEY]: { S: 'TEST-IMAGE' },
-            [PAGE_KEY]: { N: '2' },
+            [PAGE_KEY]: { N: '1' },
             [DATA_KEY]: { S: expect.stringMatching(/link3.*link4/) },
           },
         })
@@ -113,7 +117,7 @@ describe('dynamoDataService', () => {
             [DATA_TYPE_KEY]: { S: 'TEST-IMAGE' },
             [PAGE_KEY]: { N: '5' },
           },
-          UpdateExpression: expect.stringContaining(`${DATA_KEY} = :data`),
+          UpdateExpression: expect.stringContaining(`:data`),
           ExpressionAttributeValues: expect.objectContaining({
             ':data': { S: expect.stringMatching(/link1.*link2/) },
           }),
@@ -135,18 +139,23 @@ describe('dynamoDataService', () => {
 
   describe('Clear Data', () => {
     it('should clear all data for type', async () => {
+      const mock = mockClient(DynamoDBClient);
+
       const deleteItemMock = jest.fn();
-      mockClient(DynamoDBClient)
-      .on(DeleteItemCommand)
-      .callsFake(deleteItemMock);
+      mock.on(DeleteItemCommand).callsFake(deleteItemMock);
+
+      mock.on(QueryCommand).resolves({Items: [anyDataItemWithKey('TEST-IMAGE', 0)]})
 
       await service.clearData(DataType.IMAGE);
 
-      expect(deleteItemMock).toHaveBeenCalledWith(expect.objectContaining({
-        Key: {
-          [DATA_TYPE_KEY]: { S: 'TEST-IMAGE' },
-        },
-      }));
+      expect(deleteItemMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          Key: {
+            [DATA_TYPE_KEY]: { S: 'TEST-IMAGE' },
+            [PAGE_KEY]: { N: '0' },
+          },
+        })
+      );
     });
   });
 });

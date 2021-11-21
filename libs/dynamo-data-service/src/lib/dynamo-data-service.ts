@@ -86,7 +86,7 @@ export class DynamoDataService implements DataService {
     const response = await this.getAllPagesByType(type, 1, true);
 
     let lastPage =
-      response.Items.length > 0 ? parseInt(response.Items[0][PAGE_KEY].N) : 0;
+      response.Items.length > 0 ? parseInt(response.Items[0][PAGE_KEY].N) : -1;
     const lastPageItem = this.parseItem(response.Items[0]);
 
     if (lastPageItem.length > 0) {
