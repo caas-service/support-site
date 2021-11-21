@@ -13,8 +13,10 @@
   "private": true,
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.38.0",
+    "csv": "^6.0.4",
     "lodash": "^4.17.21",
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.0",
+    "yargs": "^17.2.1"
   },
   "devDependencies": {
     "@aws-cdk/assert": "^1.46.0",
@@ -31,6 +33,7 @@
     "@nrwl/eslint-plugin-nx": "12.10.0",
     "@nrwl/jest": "12.10.0",
     "@nrwl/linter": "12.10.0",
+    "@nrwl/node": "12.10.0",
     "@nrwl/tao": "12.10.0",
     "@nrwl/workspace": "12.10.0",
     "@openapitools/openapi-generator-cli": "^2.4.13",
@@ -38,6 +41,7 @@
     "@types/jest": "27.0.2",
     "@types/lodash": "^4.14.177",
     "@types/node": "14.14.33",
+    "@types/yargs": "^17.0.7",
     "@typescript-eslint/eslint-plugin": "~4.31.1",
     "@typescript-eslint/parser": "~4.31.1",
     "aws-lambda": "^1.0.6",

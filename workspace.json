@@ -8,20 +8,14 @@
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": [
-            "{options.outputFile}"
-          ],
+          "outputs": ["{options.outputFile}"],
           "options": {
-            "lintFilePatterns": [
-              "libs/data/**/*.ts"
-            ]
+            "lintFilePatterns": ["libs/data/**/*.ts"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/data"
-          ],
+          "outputs": ["coverage/libs/data"],
           "options": {
             "jestConfig": "libs/data/jest.config.js",
             "passWithNoTests": true
@@ -36,20 +30,14 @@
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": [
-            "{options.outputFile}"
-          ],
+          "outputs": ["{options.outputFile}"],
           "options": {
-            "lintFilePatterns": [
-              "libs/dynamo-data-service/**/*.ts"
-            ]
+            "lintFilePatterns": ["libs/dynamo-data-service/**/*.ts"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/dynamo-data-service"
-          ],
+          "outputs": ["coverage/libs/dynamo-data-service"],
           "options": {
             "jestConfig": "libs/dynamo-data-service/jest.config.js",
             "passWithNoTests": true
@@ -64,20 +52,14 @@
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": [
-            "{options.outputFile}"
-          ],
+          "outputs": ["{options.outputFile}"],
           "options": {
-            "lintFilePatterns": [
-              "libs/lambda-rest-api/**/*.ts"
-            ]
+            "lintFilePatterns": ["libs/lambda-rest-api/**/*.ts"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/lambda-rest-api"
-          ],
+          "outputs": ["coverage/libs/lambda-rest-api"],
           "options": {
             "jestConfig": "libs/lambda-rest-api/jest.config.js",
             "passWithNoTests": true
@@ -122,18 +104,65 @@
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/support-site-aws"
-          ],
+          "outputs": ["coverage/apps/support-site-aws"],
           "options": {
             "jestConfig": "apps/support-site-aws/jest.config.js",
             "passWithNoTests": true
           }
         }
       }
+    },
+    "support-site-cli": {
+      "root": "apps/support-site-cli",
+      "sourceRoot": "apps/support-site-cli/src",
+      "projectType": "application",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/support-site-cli",
+            "main": "apps/support-site-cli/src/main.ts",
+            "tsConfig": "apps/support-site-cli/tsconfig.app.json",
+            "assets": ["apps/support-site-cli/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/support-site-cli/src/environments/environment.ts",
+                  "with": "apps/support-site-cli/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "executor": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "support-site-cli:build"
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/support-site-cli/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/support-site-cli"],
+          "options": {
+            "jestConfig": "apps/support-site-cli/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
     }
-  },
-  "cli": {
-    "defaultCollection": "@nrwl/workspace"
   }
 }

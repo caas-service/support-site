@@ -39,5 +39,9 @@
     "support-site-aws": {
       "tags": []
     }
-  }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/node"
+  },
+  "defaultProject": "support-site-cli"
 }
