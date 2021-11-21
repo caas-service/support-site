@@ -1,5 +1,6 @@
 import {
   AttributeValue,
+  DeleteItemCommand,
   DynamoDBClient,
   GetItemCommand,
   PutItemCommand,
@@ -111,5 +112,14 @@ export class DynamoDataService implements DataService {
       );
       lastPage += 1;
     }
+  }
+
+  async clearData(type: DataType) {
+    await this.client.send(new DeleteItemCommand({
+      TableName: this.table,
+      Key: {
+        [DATA_TYPE_KEY]: { S: this.buildKey(type) },
+      },
+    }));
   }
 }

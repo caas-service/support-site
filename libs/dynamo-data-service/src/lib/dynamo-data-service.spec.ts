@@ -1,6 +1,7 @@
 import { DynamoDataService } from './dynamo-data-service';
 import { mockClient } from 'aws-sdk-client-mock';
 import {
+  DeleteItemCommand,
   DynamoDBClient,
   ExpectedAttributeValue,
   GetItemCommand,
@@ -50,7 +51,7 @@ describe('dynamoDataService', () => {
     it('should save data in pages', async () => {
       const mock = mockClient(DynamoDBClient);
       const putItemMock = jest.fn();
-      mock.on(PutItemCommand).callsFake((i) => putItemMock(i));
+      mock.on(PutItemCommand).callsFake(putItemMock);
       mock.on(QueryCommand).resolves({ Items: [] });
 
       await service.saveData(DataType.IMAGE, [
@@ -84,10 +85,10 @@ describe('dynamoDataService', () => {
       const mock = mockClient(DynamoDBClient);
 
       const putItemMock = jest.fn();
-      mock.on(PutItemCommand).callsFake((i) => putItemMock(i));
+      mock.on(PutItemCommand).callsFake(putItemMock);
 
       const updateItemMock = jest.fn();
-      mock.on(UpdateItemCommand).callsFake((i) => updateItemMock(i));
+      mock.on(UpdateItemCommand).callsFake(updateItemMock);
 
       const data: Data[] = [{ data: 'link1' }];
       mock.on(QueryCommand).resolves({
@@ -129,6 +130,23 @@ describe('dynamoDataService', () => {
           },
         })
       );
+    });
+  });
+
+  describe('Clear Data', () => {
+    it('should clear all data for type', async () => {
+      const deleteItemMock = jest.fn();
+      mockClient(DynamoDBClient)
+      .on(DeleteItemCommand)
+      .callsFake(deleteItemMock);
+
+      await service.clearData(DataType.IMAGE);
+
+      expect(deleteItemMock).toHaveBeenCalledWith(expect.objectContaining({
+        Key: {
+          [DATA_TYPE_KEY]: { S: 'TEST-IMAGE' },
+        },
+      }));
     });
   });
 });
