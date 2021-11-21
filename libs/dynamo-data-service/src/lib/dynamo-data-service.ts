@@ -5,6 +5,7 @@ import {
   GetItemCommand,
   PutItemCommand,
   QueryCommand,
+  QueryCommandInput,
   UpdateItemCommand,
 } from '@aws-sdk/client-dynamodb';
 import {
@@ -60,18 +61,29 @@ export class DynamoDataService implements DataService {
     return JSON.parse(item[DATA_KEY].S);
   }
 
+  private async getAllPagesByType(
+    type: DataType,
+    limit = -1,
+    reversed = false
+  ) {
+    const input: QueryCommandInput = {
+      TableName: this.table,
+      KeyConditionExpression: `${DATA_TYPE_KEY} = :key`,
+      ExpressionAttributeValues: {
+        ':key': { S: this.buildKey(type) },
+      },
+      ScanIndexForward: !reversed,
+    };
+
+    if (limit !== -1) {
+      input.Limit = limit;
+    }
+
+    return this.client.send(new QueryCommand(input));
+  }
+
   async saveData(type: DataType, data: Data[]) {
-    const response = await this.client.send(
-      new QueryCommand({
-        TableName: this.table,
-        KeyConditionExpression: `${DATA_TYPE_KEY} = :key`,
-        ExpressionAttributeValues: {
-          ':key': { S: this.buildKey(type) },
-        },
-        Limit: 1,
-        ScanIndexForward: false,
-      })
-    );
+    const response = await this.getAllPagesByType(type, 1, true);
 
     let lastPage =
       response.Items.length > 0 ? parseInt(response.Items[0][PAGE_KEY].N) : 0;
@@ -87,15 +99,15 @@ export class DynamoDataService implements DataService {
           TableName: this.table,
           Key: {
             [DATA_TYPE_KEY]: { S: this.buildKey(type) },
-            [PAGE_KEY]: { N: `${lastPage}`},
+            [PAGE_KEY]: { N: `${lastPage}` },
           },
           UpdateExpression: `SET #data = :data`,
           ExpressionAttributeNames: {
-            '#data': DATA_KEY
+            '#data': DATA_KEY,
           },
           ExpressionAttributeValues: {
-            ':data': { S: JSON.stringify(lastPageItem) }
-          }
+            ':data': { S: JSON.stringify(lastPageItem) },
+          },
         })
       );
     }
@@ -118,11 +130,17 @@ export class DynamoDataService implements DataService {
   }
 
   async clearData(type: DataType) {
-    await this.client.send(new DeleteItemCommand({
-      TableName: this.table,
-      Key: {
-        [DATA_TYPE_KEY]: { S: this.buildKey(type) },
-      },
-    }));
+    const response = await this.getAllPagesByType(type);
+    for (const item of response.Items) {
+      await this.client.send(
+        new DeleteItemCommand({
+          TableName: this.table,
+          Key: {
+            [DATA_TYPE_KEY]: item[DATA_TYPE_KEY],
+            [PAGE_KEY]: item[PAGE_KEY],
+          },
+        })
+      );
+    }
   }
 }
